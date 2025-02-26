@@ -14,7 +14,7 @@
 ```sh
 git clone https://github.com/greyroll/flashcards_tg_bot.git
 ```
-#### 2. Настройкаа окружения (.env)
+#### 2. Настройка окружения (.env)
 Создайте файл `.env` в корне проекта и укажите:
 ```
 BOT_TOKEN = "your_token_here"
