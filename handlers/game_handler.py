@@ -6,18 +6,18 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from loguru import logger
 
 from classes.user_status import UserStatus
-from config import BASE_URL
+from config import BACKEND_URL
 from funcs import create_keyboard
 
 
-class UserHandlers:
+class GameHandler:
 
 	@staticmethod
 	async def start_command(message: Message, state: FSMContext):
 		"""Отправляет запрос на сервер для получения доступных колод."""
 
-		logger.info(f"Отправка GET-запроса на {BASE_URL}/decks, получение доступных колод")
-		response = requests.get(f"{BASE_URL}/decks")
+		logger.info(f"Отправка GET-запроса на {BACKEND_URL}/decks, получение доступных колод")
+		response = requests.get(f"{BACKEND_URL}/decks")
 
 		if response.status_code == 200:
 			data = response.json()
@@ -60,14 +60,14 @@ class UserHandlers:
 		user_name = message.from_user.full_name
 		logger.info(f"Начало сессии для {user_name} с колодой {deck_name}")
 
-		response = requests.post(f"{BASE_URL}/session/start", json={"user_name": user_name, "deck_name": deck_name})
+		response = requests.post(f"{BACKEND_URL}/session/start", json={"user_name": user_name, "deck_name": deck_name})
 
 		if response.status_code == 200:
 			data = response.json()
 			session_id: int = data.get("session_id", "Ошибка: сессия не найдена")
 			logger.info(f"Сессия запущена, session_id: {session_id}")
 			await state.update_data({"session_id": session_id})
-			await UserHandlers.show_front(message, state)
+			await GameHandler.show_front(message, state)
 		else:
 			await message.answer(text=f"{response.status_code}, {response.text}")
 			logger.error(f"Ошибка запроса: {requests.RequestException}, статус: {response.status_code}, ответ: {response.text}")
@@ -82,7 +82,7 @@ class UserHandlers:
 		logger.info(f"Запрос на фронт-карту сессии {session_id}")
 
 		headers = {"Authorization": f"Bearer {session_id}"}
-		response = requests.get(f"{BASE_URL}/session/front", headers=headers)
+		response = requests.get(f"{BACKEND_URL}/session/front", headers=headers)
 
 		if response.status_code == 200:
 			data = response.json()
@@ -106,7 +106,7 @@ class UserHandlers:
 		logger.info(f"Запрос на бэк-карту сессии {session_id}")
 
 		headers = {"Authorization": f"Bearer {session_id}"}
-		response = requests.get(f"{BASE_URL}/session/back", headers=headers)
+		response = requests.get(f"{BACKEND_URL}/session/back", headers=headers)
 
 		if response.status_code == 200:
 			data = response.json()
@@ -140,16 +140,16 @@ class UserHandlers:
 		logger.info(f"Отправка ответа на карту: {is_card_studied}, сессия: {session_id}")
 
 		headers = {"Authorization": f"Bearer {session_id}"}
-		response = requests.post(f"{BASE_URL}/session/check_answer", headers=headers, json={"is_card_studied": is_card_studied})
+		response = requests.post(f"{BACKEND_URL}/session/check_answer", headers=headers, json={"is_card_studied": is_card_studied})
 
 		if response.status_code == 200:
 			data = response.json()
 			is_finished = data.get("is_finished", False)
 			if is_finished:
 				logger.info(f"Сессия {session_id} завершена, показываем статистику")
-				await UserHandlers.finish_session_show_stats(message, state)
+				await GameHandler.finish_session_show_stats(message, state)
 			else:
-				await UserHandlers.show_front(message, state)
+				await GameHandler.show_front(message, state)
 		else:
 			await message.answer(text=f"{response.status_code}, {response.text}")
 			logger.error(f"Ошибка запроса: {requests.RequestException}, статус: {response.status_code}, ответ: {response.text}")
@@ -163,7 +163,7 @@ class UserHandlers:
 		logger.info(f"Запрос на завершение сессии {session_id}")
 
 		headers = {"Authorization": f"Bearer {session_id}"}
-		response = requests.get(f"{BASE_URL}/session/finish", headers=headers)
+		response = requests.get(f"{BACKEND_URL}/session/finish", headers=headers)
 
 		if response.status_code == 200:
 			data = response.json()

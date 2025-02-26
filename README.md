@@ -12,27 +12,24 @@
 ### 🚀 Установка и запуск
 #### 1. Клонирование репозитория
 ```sh
-git clone <репозиторий>
-cd flashcards_tg_bot
+git clone https://github.com/greyroll/flashcards_tg_bot.git
 ```
-
-#### 2. Создание виртуального окружения и установка зависимостей
-
-```sh
-python -m venv .venv
-source .venv/bin/activate  # Для macOS/Linux
-.venv\Scripts\activate     # Для Windows
-
-pip install -r requirements.txt
-```
-#### 3. В файле config.py укажите токен телеграм-бота и url сервера
+#### 2. Настройкаа окружения (.env)
+Создайте файл `.env` в корне проекта и укажите:
 ```
 BOT_TOKEN = "your_token_here"
 BASE_URL = "http://your_url_here"
+```
+#### 3. Установка зависимостей
+
+```sh
+pip install -r requirements.txt
 ```
 #### 4. Запуск бота
 ```sh
 python main.py
 ```
 
-Бот взаимодействует с бэкендом через BASE_URL.
+Бот взаимодействует с бэкендом через BACKEND_URL.
+
+бэкенд: [flashcards_back](https://github.com/greyroll/flashcards_back)

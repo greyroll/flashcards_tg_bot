@@ -1,2 +1,7 @@
-BOT_TOKEN = "" # Токен телеграм-бота
-BASE_URL = "http://" # url сервера в виде "http://example.com"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+BACKEND_URL = os.getenv("BACKEND_URL")
