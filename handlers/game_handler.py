@@ -170,7 +170,7 @@ class GameHandler:
 			studied_cards_number = data["studied_cards_number"]
 			logger.info(f"Сессия завершена. Изучено карт: {studied_cards_number}")
 			await message.answer(
-				text=f"Колода:\n{result["deck_name"]}\nКоличество изученных карточек: {studied_cards_number}",
+				text=f"Колода:\n{result['deck_name']}\nКоличество изученных карточек: {studied_cards_number}",
 				reply_markup=ReplyKeyboardRemove()
 			)
 		else:
