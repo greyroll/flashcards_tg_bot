@@ -16,8 +16,8 @@ class GameHandler:
 	async def start_command(message: Message, state: FSMContext):
 		"""Отправляет запрос на сервер для получения доступных колод."""
 
-		logger.info(f"Отправка GET-запроса на {BACKEND_URL}/decks, получение доступных колод")
-		response = requests.get(f"{BACKEND_URL}/decks")
+		logger.info(f"Отправка GET-запроса на {BACKEND_URL}/decks/names, получение доступных колод")
+		response = requests.get(f"{BACKEND_URL}/decks/names")
 
 		if response.status_code == 200:
 			data = response.json()
