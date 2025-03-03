@@ -6,7 +6,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from loguru import logger
 
 from classes.user_status import UserStatus
-from config import BACKEND_URL
+from config import BACKEND_URL, API_KEY
 from funcs import create_keyboard
 
 
@@ -17,7 +17,7 @@ class GameHandler:
 		"""Отправляет запрос на сервер для получения доступных колод."""
 
 		logger.info(f"Отправка GET-запроса на {BACKEND_URL}/decks/names, получение доступных колод")
-		response = requests.get(f"{BACKEND_URL}/decks/names")
+		response = requests.get(f"{BACKEND_URL}/decks/names", headers={"X-API-Key": API_KEY})
 
 		if response.status_code == 200:
 			data = response.json()
@@ -60,7 +60,11 @@ class GameHandler:
 		user_name = message.from_user.full_name
 		logger.info(f"Начало сессии для {user_name} с колодой {deck_name}")
 
-		response = requests.post(f"{BACKEND_URL}/session/start", json={"user_name": user_name, "deck_name": deck_name})
+		response = requests.post(
+			url=f"{BACKEND_URL}/session/start",
+			json={"user_name": user_name, "deck_name": deck_name},
+			headers={"X-API-Key": API_KEY},
+		)
 
 		if response.status_code == 200:
 			data = response.json()
@@ -81,7 +85,7 @@ class GameHandler:
 		session_id = result["session_id"]
 		logger.info(f"Запрос на фронт-карту сессии {session_id}")
 
-		headers = {"Authorization": f"Bearer {session_id}"}
+		headers = {"Authorization": f"Bearer {session_id}", "X-API-Key": API_KEY}
 		response = requests.get(f"{BACKEND_URL}/session/front", headers=headers)
 
 		if response.status_code == 200:
@@ -105,7 +109,7 @@ class GameHandler:
 		session_id = result["session_id"]
 		logger.info(f"Запрос на бэк-карту сессии {session_id}")
 
-		headers = {"Authorization": f"Bearer {session_id}"}
+		headers = {"Authorization": f"Bearer {session_id}", "X-API-Key": API_KEY}
 		response = requests.get(f"{BACKEND_URL}/session/back", headers=headers)
 
 		if response.status_code == 200:
@@ -139,7 +143,7 @@ class GameHandler:
 		session_id = result["session_id"]
 		logger.info(f"Отправка ответа на карту: {is_card_studied}, сессия: {session_id}")
 
-		headers = {"Authorization": f"Bearer {session_id}"}
+		headers = {"Authorization": f"Bearer {session_id}", "X-API-Key": API_KEY}
 		response = requests.post(f"{BACKEND_URL}/session/check_answer", headers=headers, json={"is_card_studied": is_card_studied})
 
 		if response.status_code == 200:
@@ -162,7 +166,7 @@ class GameHandler:
 		session_id = result["session_id"]
 		logger.info(f"Запрос на завершение сессии {session_id}")
 
-		headers = {"Authorization": f"Bearer {session_id}"}
+		headers = {"Authorization": f"Bearer {session_id}", "X-API-Key": API_KEY}
 		response = requests.get(f"{BACKEND_URL}/session/finish", headers=headers)
 
 		if response.status_code == 200:
