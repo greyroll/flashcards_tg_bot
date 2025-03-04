@@ -147,7 +147,7 @@ class GameHandler:
 
 		headers = {"Authorization": f"Bearer {session_id}", "X-API-Key": API_KEY}
 		async with aiohttp.ClientSession() as session:
-			async with session.post(url=f"{BACKEND_URL}/session/check_answer", headers=headers, ssl=False) as response:
+			async with session.post(url=f"{BACKEND_URL}/session/check_answer", json={"is_card_studied": is_card_studied}, headers=headers, ssl=False) as response:
 				if response.status == 200:
 					data = await response.json()
 					is_finished = data.get("is_finished", False)
